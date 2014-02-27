@@ -1,8 +1,19 @@
 -module(complex5).
--export([start/1, stop/0, init/1]).
+-export([start/0, stop/0, init/1]).
 -export([foo/1, bar/1]).
 
-start(SharedLib) ->
+start() ->
+    PrivDir = case code:priv_dir(?MODULE) of
+                {error, bad_name} ->
+                    EbinDir = filename:dirname(code:which(?MODULE)),
+                    AppPath = filename:dirname(EbinDir),
+                    filename:join(AppPath, "priv");
+                Path ->
+                    Path
+              end,
+
+    SharedLib = string:concat(PrivDir, "/stylish_drv.so"),
+
     case erl_ddll:load_driver(".", SharedLib) of
       ok -> ok;
       {error, already_loaded} -> ok;
