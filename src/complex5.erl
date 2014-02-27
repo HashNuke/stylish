@@ -1,5 +1,5 @@
 -module(complex5).
--export([start/0, stop/0, init/1]).
+-export([start/0, stop/0, init/1, call_port/1]).
 -export([foo/1, bar/1]).
 
 start() ->
