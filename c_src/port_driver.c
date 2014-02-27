@@ -5,24 +5,24 @@
 
 typedef struct {
     ErlDrvPort port;
-} example_data;
+} stylish_data;
 
-static ErlDrvData example_drv_start(ErlDrvPort port, char *buff)
+static ErlDrvData stylish_drv_start(ErlDrvPort port, char *buff)
 {
-    example_data* d = (example_data*)driver_alloc(sizeof(example_data));
+    stylish_data* d = (stylish_data*)driver_alloc(sizeof(stylish_data));
     d->port = port;
     return (ErlDrvData)d;
 }
 
-static void example_drv_stop(ErlDrvData handle)
+static void stylish_drv_stop(ErlDrvData handle)
 {
     driver_free((char*)handle);
 }
 
-static void example_drv_output(ErlDrvData handle, char *buff, 
+static void stylish_drv_output(ErlDrvData handle, char *buff, 
 			       ErlDrvSizeT bufflen)
 {
-    example_data* d = (example_data*)handle;
+    stylish_data* d = (stylish_data*)handle;
     char fn = buff[0], arg = buff[1], res;
     if (fn == 1) {
       res = foo(arg);
@@ -32,14 +32,14 @@ static void example_drv_output(ErlDrvData handle, char *buff,
     driver_output(d->port, &res, 1);
 }
 
-ErlDrvEntry example_driver_entry = {
+ErlDrvEntry stylish_driver_entry = {
     NULL,			/* F_PTR init, called when driver is loaded */
-    example_drv_start,		/* L_PTR start, called when port is opened */
-    example_drv_stop,		/* F_PTR stop, called when port is closed */
-    example_drv_output,		/* F_PTR output, called when erlang has sent */
+    stylish_drv_start,		/* L_PTR start, called when port is opened */
+    stylish_drv_stop,		/* F_PTR stop, called when port is closed */
+    stylish_drv_output,		/* F_PTR output, called when erlang has sent */
     NULL,			/* F_PTR ready_input, called when input descriptor ready */
     NULL,			/* F_PTR ready_output, called when output descriptor ready */
-    "example_drv",		/* char *driver_name, the argument to open_port */
+    "stylish_drv",		/* char *driver_name, the argument to open_port */
     NULL,			/* F_PTR finish, called when unloaded */
     NULL,                       /* void *handle, Reserved by VM */
     NULL,			/* F_PTR control, port_command callback */
@@ -67,7 +67,7 @@ ErlDrvEntry example_driver_entry = {
 				   event object */
 };
 
-DRIVER_INIT(example_drv) /* must match name in driver_entry */
+DRIVER_INIT(stylish_drv) /* must match name in driver_entry */
 {
-    return &example_driver_entry;
+    return &stylish_driver_entry;
 }
