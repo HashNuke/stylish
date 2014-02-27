@@ -1,3 +1,6 @@
 priv/*.so
 ebin/*.beam
 c_src/*.o
+tutorial/*.so
+tutorial/example_drv
+tutorial/*.beam
