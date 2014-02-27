@@ -12,9 +12,9 @@ start() ->
                     Path
               end,
 
-    SharedLib = string:concat(PrivDir, "/stylish_drv.so"),
+    SharedLib = "stylish_drv",
 
-    case erl_ddll:load_driver(".", SharedLib) of
+    case erl_ddll:load_driver(PrivDir, SharedLib) of
       ok -> ok;
       {error, already_loaded} -> ok;
       Error ->
