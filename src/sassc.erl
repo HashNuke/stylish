@@ -15,4 +15,4 @@ command_path() ->
                 Path ->
                   Path
               end,
-    spawn(?MODULE, init, [filename:join([PrivDir, "sassc", "bin", "sassc"])]).
+    filename:join([PrivDir, "sassc", "bin", "sassc"]).
