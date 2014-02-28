@@ -1,0 +1,6 @@
+[submodule "priv/libsass"]
+	path = priv/libsass
+	url = https://github.com/hcatlin/libsass.git
+[submodule "priv/sassc"]
+	path = priv/sassc
+	url = https://github.com/hcatlin/sassc.git
