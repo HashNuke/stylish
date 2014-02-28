@@ -1,12 +1,12 @@
 {application, stylish,
  [
-  {description, ""},
+  {description, "SASS compiler wrapper"},
   {vsn, "1"},
   {registered, []},
   {applications, [
                   kernel,
                   stdlib
                  ]},
-  {mod, { stylish_app, []}},
+  {mod, { stylish, []}},
   {env, []}
  ]}.
