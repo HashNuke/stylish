@@ -51,8 +51,3 @@ loop(Port) ->
     {'EXIT', Port, Reason} ->
       exit(port_terminated)
   end.
-
-encode({foo, X}) -> [1, X];
-encode({bar, Y}) -> [2, Y].
-
-decode([Int]) -> Int.
