@@ -5,11 +5,11 @@
 start() ->
     PrivDir = case code:priv_dir(?MODULE) of
                 {error, bad_name} ->
-                    EbinDir = filename:dirname(code:which(?MODULE)),
-                    AppPath = filename:dirname(EbinDir),
-                    filename:join(AppPath, "priv");
+                  EbinDir = filename:dirname(code:which(?MODULE)),
+                  AppPath = filename:dirname(EbinDir),
+                  filename:join(AppPath, "priv");
                 Path ->
-                    Path
+                  Path
               end,
     spawn(?MODULE, init, [filename:join([PrivDir, "stylish"])]).
 stop() ->
@@ -24,33 +24,33 @@ call_port(Msg) ->
     complex ! {call, self(), Msg},
     receive
     	{complex, Result} ->
-    	    Result
+        Result
     end.
 
 init(ExtPrg) ->
-    register(complex, self()),
-    process_flag(trap_exit, true),
-    Port = open_port({spawn, ExtPrg}, [{packet, 2}]),
-    loop(Port).
+  register(complex, self()),
+  process_flag(trap_exit, true),
+  Port = open_port({spawn, ExtPrg}, [{packet, 2}]),
+  loop(Port).
 
 loop(Port) ->
-    receive
-    	{call, Caller, Msg} ->
-    	    Port ! {self(), {command, encode(Msg)}},
-    	    receive
+  receive
+    {call, Caller, Msg} ->
+	    Port ! {self(), {command, encode(Msg)}},
+	    receive
     		{Port, {data, Data}} ->
-    		    Caller ! {complex, decode(Data)}
-    	    end,
-    	    loop(Port);
-    	stop ->
-    	    Port ! {self(), close},
-    	    receive
+          Caller ! {complex, decode(Data)}
+	    end,
+	    loop(Port);
+    stop ->
+	    Port ! {self(), close},
+	    receive
     		{Port, closed} ->
-    		    exit(normal)
-    	    end;
-    	{'EXIT', Port, Reason} ->
-    	    exit(port_terminated)
-    end.
+          exit(normal)
+	    end;
+    {'EXIT', Port, Reason} ->
+      exit(port_terminated)
+  end.
 
 encode({foo, X}) -> [1, X];
 encode({bar, Y}) -> [2, Y].
