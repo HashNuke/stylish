@@ -38,8 +38,9 @@ format_options(Options)->
   SourceMap = get_source_map_option(Options),
   LoadPaths = get_load_path_options(Options),
   Output = get_output_path_option(Options),
+  Style = get_style_option(Options),
 
-  string:join([LineNumbers, SourceMap, LoadPaths, Output], " ").
+  string:join([LineNumbers, Style, SourceMap, LoadPaths, Output], " ").
 
 
 command_path() ->
@@ -53,15 +54,11 @@ command_path() ->
               end,
     filename:join([PrivDir, "sassc", "bin", "sassc"]).
 
+
 get_load_path_options(Options)->
-  Paths = proplists:get_value("load_paths", Options, []),
+  Paths = proplists:get_value('load_paths', Options, []),
   PathOptionMapper = fun(Path)->
-    case is_binary(Path) of
-      false ->
-        "-I " ++ " " ++ Path;
-      _ ->
-        binary_to_list("-I " ++ " " ++ Path)
-    end
+    "-I " ++ " " ++ format_option_value(Path)
   end,
 
   CleanPathOptions = lists:map(PathOptionMapper, Paths),
@@ -69,16 +66,22 @@ get_load_path_options(Options)->
 
 
 get_line_numbers_option(Options)->
-  case proplists:get_value("line_numbers", Options) of
+  case proplists:get_value('line_numbers', Options) of
     true -> "-l";
     _ -> ""
   end.
 
 
+get_style_option(Options)->
+  OptionValue = proplists:get_value('style', Options, "nested"),
+  FormattedValue = format_option_value(OptionValue),
+  "-t" ++ "" ++ FormattedValue.
+
+
 get_source_map_option(Options)->
-  case proplists:get_value("source_map", Options) of
+  case proplists:get_value('source_map', Options) of
     true ->
-      case proplists:get_value("output", Options) of
+      case proplists:get_value('output', Options) of
         undefined -> "";
         _ -> "-m"
       end;
@@ -87,8 +90,15 @@ get_source_map_option(Options)->
 
 
 get_output_path_option(Options)->
-  Output = proplists:get_value("output", Options),
+  Output = proplists:get_value('output', Options),
   case Output of
     undefined -> "";
-    _ -> Output
+    _ -> format_option_value(Output)
+  end.
+
+
+format_option_value(Value)->
+  case is_binary(Value) of
+    true -> binary_to_list(Value);
+    _ -> Value
   end.
