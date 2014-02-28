@@ -5,4 +5,4 @@
               {applications,[kernel,stdlib]},
               {mod,{stylish_app,[]}},
               {env,[]},
-              {modules,[complex5,hellhole,stylish_app,stylish_sup]}]}.
+              {modules,[complex1,complex5,hellhole,stylish_app,stylish_sup]}]}.
