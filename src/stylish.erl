@@ -55,16 +55,16 @@ command_path() ->
 
 get_load_path_options(Options)->
   Paths = proplists:get_value("load_paths", Options, []),
-
-  CleanPathOptions = lists:map(fn(Path)->
+  PathOptionMapper = fun(Path)->
     case is_binary(Path) of
-      true ->
-        binary_to_list("-I " + " " + Path);
+      false ->
+        "-I " ++ " " ++ Path;
       _ ->
-        "-I " + " " + Path
+        binary_to_list("-I " ++ " " ++ Path)
     end
-  end, Paths),
+  end,
 
+  CleanPathOptions = lists:map(PathOptionMapper, Paths),
   string:join([CleanPathOptions], " ").
 
 
