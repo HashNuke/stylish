@@ -23,17 +23,8 @@ compile(FilePath) ->
 
 compile(FilePath, Options) ->
   FormattedOptions = format_options(Options),
-  FilePathString = case is_binary(FilePath) of
-    true -> binary_to_list(FilePath);
-    _ -> FilePath
-  end,
-
-  FileOutput = case get_output_path_option(Options) of
-    "" -> false;
-    _  -> true
-  end,
-
-  CommandParts = [command_path(), FilePathString] ++ [FormattedOptions],
+  FileOutput = get_output_path_option(Options),
+  CommandParts = [command_path(), binary_to_list(FilePath)] ++ [FormattedOptions],
   Command = string:join(CommandParts, " "),
   run_command(Command, FileOutput).
 
@@ -42,10 +33,9 @@ run_command(Command, FileOutput)->
   case exec:run(Command, [stdout, stderr, sync]) of
     {ok, Response} ->
       case FileOutput of
-        true ->
-          ok;
-        false ->
-          {ok, hd(proplists:get_value(stdout, Response, [""])) }
+        undefined ->
+          {ok, hd(proplists:get_value(stdout, Response, [""])) };
+        _ -> ok
       end;
     {error, Response} ->
       {error, hd(proplists:get_value(stderr, Response, "")) }
@@ -59,7 +49,15 @@ format_options(Options)->
   Output = get_output_path_option(Options),
   Style = get_style_option(Options),
 
-  string:join([LineNumbers, Style, SourceMap, LoadPaths, Output], " ").
+  ValidOptions = lists:filter(fun(Option)->
+      case Option of
+        undefined -> false;
+        [] -> false;
+        _ -> true
+      end
+    end, [LineNumbers, Style, SourceMap, LoadPaths, Output]),
+
+  string:join(ValidOptions, " ").
 
 
 command_path() ->
@@ -75,49 +73,43 @@ command_path() ->
 
 
 get_load_path_options(Options)->
-  Paths = proplists:get_value('load_paths', Options, []),
+  Paths = proplists:get_value(<<"load_paths">>, Options, []),
   PathOptionMapper = fun(Path)->
-    "-I " ++ " " ++ format_option_value(Path)
+    "-I " ++ " " ++ binary_to_list(Path)
   end,
 
   CleanPathOptions = lists:map(PathOptionMapper, Paths),
-  string:join([CleanPathOptions], " ").
+  string:join(CleanPathOptions, " ").
 
 
 get_line_numbers_option(Options)->
-  case proplists:get_value('line_numbers', Options) of
+  case proplists:get_value(<<"line_numbers">>, Options) of
     true -> "-l";
-    _ -> ""
+    _ -> undefined
   end.
 
 
 get_style_option(Options)->
-  OptionValue = proplists:get_value('style', Options, "nested"),
-  FormattedValue = format_option_value(OptionValue),
-  "-t" ++ " " ++ FormattedValue.
+  case proplists:get_value(<<"compress">>, Options, false) of
+    true  -> "-t nested";
+    false -> "-t compressed"
+  end.
 
 
 get_source_map_option(Options)->
-  case proplists:get_value('source_map', Options) of
+  case proplists:get_value(<<"source_map">>, Options) of
     true ->
-      case proplists:get_value('output', Options) of
-        undefined -> "";
+      case proplists:get_value(<<"output">>, Options) of
+        undefined -> undefined;
         _ -> "-m"
       end;
-    _ -> ""
+    _ -> undefined
   end.
 
 
 get_output_path_option(Options)->
-  Output = proplists:get_value('output', Options),
+  Output = proplists:get_value(<<"output">>, Options),
   case Output of
-    undefined -> "";
-    _ -> format_option_value(Output)
-  end.
-
-
-format_option_value(Value)->
-  case is_binary(Value) of
-    true -> binary_to_list(Value);
-    _ -> Value
+    undefined -> undefined;
+    _ -> binary_to_list(Output)
   end.

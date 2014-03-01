@@ -11,10 +11,10 @@ Add `stylish` to your rebar deps (or mix deps if you are running Elixir).
 
 ```
 % with default options
-stylish:compile("path/to/anything.scss")
+stylish:compile(<<"path/to/anything.scss">>)
 
 % with options
-stylish:compile("path/to/anything.scss", [style, "compressed"])
+stylish:compile(<<>>"path/to/anything.scss">>, [<<"style">>, <<"compressed">>])
 ```
 
 #### Return values
@@ -27,14 +27,14 @@ stylish:compile("path/to/anything.scss", [style, "compressed"])
 
 #### Options
 
-The following options can be passed in the second argument:
+The following options can be passed in the second argument. All options must be binaries
 
 * `line_numbers` - `false` (default) or `true`. Displays line numbers.
 
-* `style` - `nested` (default) or `compressed`.
+* `compress` - `false` (default) or true.
 
-* `load_paths` - an array of paths to use as load paths for SASS imports.
+* `load_paths` - an array of paths to use as load paths for SASS imports. All paths must be erlang binaries.
 
-* `output` - If you want the resulting CSS written to a file, then pass a path. By default a string is returned.
+* `output` - If you want the resulting CSS written to a file, then pass a path (as a binary). By default a string is returned.
 
-* `source_map` - Generates source maps if output file path is set.
+* `source_map` - `false` (default) or `true`. Generates source maps if `output` option is set.
