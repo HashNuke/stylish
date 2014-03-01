@@ -1,6 +1,8 @@
 # stylish
 
-> Erlang wrapper to compile sass files
+> Erlang library to compile SCSS files.
+
+Uses the [libsass](https://github.com/hcatlin/libsass) project.
 
 ## Usage
 
