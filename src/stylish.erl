@@ -29,8 +29,16 @@ compile(FilePath, Options) ->
   end,
 
   CommandParts = [command_path(), FilePathString] ++ [FormattedOptions],
-  os:cmd( string:join(CommandParts, " ") ).
+  run_command(string:join(CommandParts, " ")).
 
+
+run_command(Command)->
+  case exec:run(Command, [stdout, stderr, sync]) of
+    {ok, Rssponse} ->
+      {ok, proplists:get_value(stdout, Response, "")}.
+    {error, Response} ->
+      {error, proplists:get_value(stderr, Response, "")}.
+  end.
 
 
 format_options(Options)->
@@ -75,7 +83,7 @@ get_line_numbers_option(Options)->
 get_style_option(Options)->
   OptionValue = proplists:get_value('style', Options, "nested"),
   FormattedValue = format_option_value(OptionValue),
-  "-t" ++ "" ++ FormattedValue.
+  "-t" ++ " " ++ FormattedValue.
 
 
 get_source_map_option(Options)->

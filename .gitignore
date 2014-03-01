@@ -1,8 +1,4 @@
 priv/*.so
-priv/stylish
 ebin
 c_src/*.o
-tutorial/*.so
-tutorial/example_drv
-tutorial/*.beam
-tutorial/*.out
+deps/*
