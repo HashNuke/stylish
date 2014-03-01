@@ -28,16 +28,27 @@ compile(FilePath, Options) ->
     _ -> FilePath
   end,
 
+  FileOutput = case get_output_path_option(Options) of
+    "" -> false;
+    _  -> true
+  end,
+
   CommandParts = [command_path(), FilePathString] ++ [FormattedOptions],
-  run_command(string:join(CommandParts, " ")).
+  Command = string:join(CommandParts, " "),
+  run_command(Command, FileOutput).
 
 
-run_command(Command)->
+run_command(Command, FileOutput)->
   case exec:run(Command, [stdout, stderr, sync]) of
-    {ok, Rssponse} ->
-      {ok, proplists:get_value(stdout, Response, "")}.
+    {ok, Response} ->
+      case FileOutput of
+        true ->
+          ok;
+        false ->
+          {ok, hd(proplists:get_value(stdout, Response, [""])) }
+      end;
     {error, Response} ->
-      {error, proplists:get_value(stderr, Response, "")}.
+      {error, hd(proplists:get_value(stderr, Response, "")) }
   end.
 
 

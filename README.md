@@ -2,15 +2,30 @@
 
 > Erlang wrapper to compile sass files
 
-### Usage
+## Usage
 
 Add `stylish` to your rebar deps (or mix deps if you are running Elixir).
 
+
 ```
+% with default options
 stylish:compile("path/to/anything.scss")
+
+% with options
+stylish:compile("path/to/anything.scss", [style, "compressed"])
 ```
 
-The following options can be passed as a second argument:
+#### Return values
+
+* For string output, if compilation is a success: `{ok, CompiledCss}`
+
+* For file output (file path passed to `output` option), if compilation is a success: `ok`
+
+* If there is a compile error, then `{error, Error}`
+
+#### Options
+
+The following options can be passed in the second argument:
 
 * `line_numbers` - `false` (default) or `true`. Displays line numbers.
 
